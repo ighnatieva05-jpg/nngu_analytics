@@ -10,8 +10,19 @@ import re
 from collections import Counter
 from dotenv import load_dotenv
 
-load_dotenv()
-VK_TOKEN = os.getenv("VK_TOKEN", "")
+# Загрузка токена с поддержкой Streamlit Cloud Secrets
+try:
+    # Пытаемся получить токен из Streamlit Secrets (для облака)
+    VK_TOKEN = st.secrets["VK_TOKEN"]
+except:
+    # Если не получилось, пробуем из .env файла (для локальной разработки)
+    from dotenv import load_dotenv
+    load_dotenv()
+    VK_TOKEN = os.getenv("VK_TOKEN", "")
+    
+    if not VK_TOKEN:
+        st.error("❌ Токен VK не найден! Добавьте VK_TOKEN в Secrets Streamlit или в файл .env")
+        st.stop()
 
 st.set_page_config(page_title="Анализатор ННГУ | Сравнение групп", layout="wide", page_icon="📊")
 st.title("🎓 Анализатор активности VK-пабликов")
